@@ -1,0 +1,35 @@
+# ==========================================
+# Godot 4+ Core Engine Ignores
+# ==========================================
+.godot/
+.nomedia/
+
+# ==========================================
+# Build and Export Exclusions
+# ==========================================
+build/
+export/
+export_presets.cfg
+export_credentials.cfg
+
+# Generated translation files (compiled from source tables)
+*.translation
+
+# ==========================================
+# IDE & Tooling Ignores
+# ==========================================
+.venv/
+hack/inkscape-mcp/
+.idea/
+.vs/
+*.vsproj
+*.sln
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
+
+# ==========================================
+# Operating System Junk
+# ==========================================
+.DS_Store
+Thumbs.db

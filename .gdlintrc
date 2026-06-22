@@ -1,0 +1,4 @@
+# gdtoolkit linter config — https://github.com/Scony/godot-gdscript-toolkit
+# Godot projects commonly interleave @export / @onready with methods; skip ordering rule.
+disable:
+- class-definitions-order

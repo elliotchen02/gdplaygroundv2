@@ -1,0 +1,83 @@
+---
+description: Directory layout for libs/, src/, assets/ and the dev folders
+alwaysApply: true
+---
+
+## Layering
+
+- `libs/` is the **systems layer**: reusable, domain-agnostic engines &
+  abstractions (movement, items, anim, net). No `src/` references, no
+  game-specific names.
+- `src/` is the **composed game**: scenes + gameplay scripts that wire `libs/`
+  systems together and own game-specific data/content.
+- There is no separate "systems" bucket in `src/` — the systems live in `libs/`;
+  `src/` only composes them. See `libs/README.md` and `src/README.md`.
+
+## `src/` — broad buckets, feature subfolders
+
+`src/` uses a **small, fixed set of broad, durable buckets**, not file-type
+folders and not one folder per feature. New directions are **feature subfolders
+inside** these buckets — almost never a new top-level folder.
+
+```
+pandemonia/
+├── libs/                # Systems & abstractions (see libs/README.md)
+├── src/                 # Composed game (see src/README.md)
+│   ├── main.tscn        #   single launch scene
+│   ├── core/            #   app shell: bootstrap + global autoloads (e.g. Net)
+│   ├── actors/          #   anything with agency (player/, npc/, enemies/ …)
+│   ├── world/           #   places you play in (levels/ + props/ + _sandbox/)
+│   └── ui/              #   menus, HUD
+├── assets/              # Raw imports (mirrors src/ buckets)
+│   └── shared/          #   cross-bucket only (sparingly)
+├── addons/              # Third-party / editor plugins
+├── hack/                # Dev-only automation, not shipped (setup, codegen, inspect)
+└── tests/               # Headless test scripts (runnable in CI)
+```
+
+## `libs/`
+
+- Portable systems in `libs/<system>/` — no game logic, no `src/` references.
+- Strategy trio: `@abstract` contract, concrete strategy, `.tres` config (see
+  `godot-rules.mdc`).
+- `src/` composes libs and owns the game-specific `.tres`.
+- Promote to `libs/` only when genuinely reused — don't pre-abstract.
+
+## `src/` buckets
+
+- `core/` — bootstrap + the **global** autoloads/singletons that wire libs
+  systems app-wide (one per game). Stays small; most systems are composed at
+  their point of use, not here.
+- `actors/` — entities with agency; each is a thin composer over `libs/`.
+- `world/` — `levels/` (playable scenes), `props/` (placeables/interactables +
+  item content), `_sandbox/` (throwaway dev scenes, never shipped).
+- `ui/` — menus and HUD.
+- Colocate `.tscn` + `.gd` (+ owned `.tres`) per feature; `class_name` only when
+  referenced across buckets.
+
+## `assets/`
+
+Path: `assets/<bucket>/<feature>/<type>/<file>` — bucket matches `src/`, feature
+is one logical unit, type is a category (`sprites`, `tilesets`, `textures`, …), file is
+snake_case.
+
+- Raw imports in `assets/`; composed scenes in `src/` — reference via
+  `res://assets/<bucket>/…`.
+- No gameplay scripts in `assets/`; colocate scripts with the owning `src/`
+  bucket.
+
+## `hack/` and `tests/`
+
+- `hack/` — dev-only automation that is **not the product** (git-hook setup,
+  codegen, one-off inspection scripts). Mirrors Go's `hack/` convention.
+- `tests/` — headless verification scripts (`SceneTree` runners) meant to be run
+  in CI. First-class, kept out of `hack/`.
+
+## Adding a feature / direction
+
+1. Add a **feature subfolder** in the bucket(s) it touches (`actors/<x>/`,
+   `world/levels/<x>/`, `world/props/<x>/`, `ui/<x>/`) — not a new top-level dir.
+2. Build/extend reusable engines in `libs/<system>/`; compose them in `src/` via
+   `.tres`. Add a `core/` autoload only for genuinely app-wide systems.
+3. Put raw imports under the matching `assets/<bucket>/<feature>/<type>/`.
+4. Commit scope matches the bucket — see `use-convention-commits.mdc`.

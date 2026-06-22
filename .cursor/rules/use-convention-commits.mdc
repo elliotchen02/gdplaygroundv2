@@ -1,0 +1,22 @@
+---
+alwaysApply: true
+---
+
+## Git & Commit Standards
+
+Use **Conventional Commits**: `type: description` or `type(scope): description`
+(lowercase, imperative).
+
+**Types:** `feat` (feature), `fix` (bug), `docs`, `refactor`, `chore`
+
+**Scopes (optional; match the top-level area when used):**
+
+- Top-level dirs: `addons`, `assets`, `cursor`, `hack`, `libs`, `plans`, `tests`
+- `src/` buckets: `core`, `actors`, `world`, `ui`
+
+Use a scope when changes stay in one area. Omit it for cross-cutting work
+(e.g. `chore: update cursor rules`, repo-wide tooling).
+
+Networking spans `libs/net` + `src/core` → scope as `libs` or `core`, not a `net` scope.
+
+Enforced by `.githooks/commit-msg`. One-time setup: `./hack/setup.sh`
