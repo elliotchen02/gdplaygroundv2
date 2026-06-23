@@ -1,0 +1,87 @@
+[gd_resource type="Resource" load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://libs/worldgen/world_gen_config.gd" id="cfg"]
+[ext_resource type="Script" path="res://libs/grid/terrain_catalog.gd" id="cat"]
+[ext_resource type="Script" path="res://libs/grid/terrain_def.gd" id="def"]
+[ext_resource type="Script" path="res://libs/worldgen/passes/noise_field_pass.gd" id="noise"]
+[ext_resource type="Script" path="res://libs/worldgen/passes/biome_classify_pass.gd" id="biome"]
+
+[sub_resource type="Resource" id="def_water"]
+script = ExtResource("def")
+id = 0
+display_name = "water"
+color = Color(0.16, 0.33, 0.5, 1)
+walkable = false
+
+[sub_resource type="Resource" id="def_sand"]
+script = ExtResource("def")
+id = 1
+display_name = "sand"
+color = Color(0.85, 0.78, 0.5, 1)
+walkable = true
+
+[sub_resource type="Resource" id="def_dirt"]
+script = ExtResource("def")
+id = 2
+display_name = "dirt"
+color = Color(0.5, 0.38, 0.25, 1)
+walkable = true
+
+[sub_resource type="Resource" id="def_grass"]
+script = ExtResource("def")
+id = 3
+display_name = "grass"
+color = Color(0.33, 0.5, 0.25, 1)
+walkable = true
+
+[sub_resource type="Resource" id="def_rock"]
+script = ExtResource("def")
+id = 4
+display_name = "rock"
+color = Color(0.4, 0.4, 0.42, 1)
+walkable = false
+
+[sub_resource type="Resource" id="catalog"]
+script = ExtResource("cat")
+terrains = [SubResource("def_water"), SubResource("def_sand"), SubResource("def_dirt"), SubResource("def_grass"), SubResource("def_rock")]
+
+[sub_resource type="Resource" id="height"]
+script = ExtResource("noise")
+field_name = "height"
+seed_offset = 0
+frequency = 0.008
+octaves = 4
+lacunarity = 2.0
+gain = 0.5
+
+[sub_resource type="Resource" id="moisture"]
+script = ExtResource("noise")
+field_name = "moisture"
+seed_offset = 1000
+frequency = 0.006
+octaves = 3
+lacunarity = 2.0
+gain = 0.5
+
+[sub_resource type="Resource" id="biome"]
+script = ExtResource("biome")
+height_field = "height"
+moisture_field = "moisture"
+water_level = 0.32
+rock_level = 0.78
+dry_threshold = 0.4
+wet_threshold = 0.62
+water_id = 0
+sand_id = 1
+dirt_id = 2
+grass_id = 3
+rock_id = 4
+
+[resource]
+script = ExtResource("cfg")
+world_seed = 1337
+world_size_tiles = Vector2i(1024, 1024)
+chunk_size = 32
+tile_size_px = 64
+terrain_catalog = SubResource("catalog")
+passes = [SubResource("height"), SubResource("moisture"), SubResource("biome")]
