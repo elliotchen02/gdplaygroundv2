@@ -1,7 +1,0 @@
----
-alwaysApply: true
----
-
-## Pandemonia
-
-Godot 4.7 stable, **2D-first** game. Code and assets use **vertical slices** (`actors`, `world`, `ui`, `core`) — see `project-structure.mdc` for the full layout convention.

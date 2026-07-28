@@ -1,0 +1,37 @@
+---
+description: How to build and compose components.
+alwaysApply: false
+---
+# Component Architecture
+
+Complements `base-godot-rules.mdc`. Composition is the law: build actors by attaching components as child nodes, never by deep actor inheritance chains.
+
+## What a component is
+
+- A component **extends the Godot node it needs to be** — `Area3D` for a trigger volume, `RayCast3D` for a probe, `Node3D` for something spatial, plain `Node` for pure logic. There are **no intermediate or abstract base classes**; Godot has single inheritance, so the component *is* the node.
+- A component owns **one** responsibility and is **fundamental** in scope — a building block reusable across unrelated objects.
+- Anything needing game-specific knowledge is **not** a `systems/` component; it belongs in `src/`.
+
+## Script vs scene
+
+- A component is a **script** (`.gd`) by default.
+- Add a `.tscn` **only** when the component encapsulates a multi-node assembly that would otherwise be rebuilt by hand at every use site (e.g. an `Area3D` with a required `CollisionShape3D` child). State why in the file header.
+
+## Layout
+
+One folder per component: `systems/components/<name>_component/<name>_component.gd` (plus `<name>_component.tscn` when a scene is warranted).
+
+## Wiring
+
+- Collaborators arrive via `@export`. A component never assumes the concrete class of its host and never uses `get_node("../../Thing")` chains.
+- Communicate **upward via signals** (past tense), **downward via method calls**.
+- Nothing in `systems/` hardcodes an input action name, collision layer, group name, or autoload. The game supplies those.
+
+## Adding a component (checklist)
+
+1. Copy `systems/components/template_component/`, rename the folder, file, and `class_name` together.
+2. State the single responsibility in the header docstring.
+3. `extends` the node the component needs to be.
+4. Group `@export`s into Wiring and Tuning.
+5. Name signals in past tense; pass the minimum a listener needs.
+6. Delete the placeholder behaviour and anything you do not use (editor warnings are fatal).

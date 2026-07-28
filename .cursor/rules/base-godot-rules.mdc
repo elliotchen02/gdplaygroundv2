@@ -1,0 +1,28 @@
+---
+alwaysApply: true
+description: Best practices for Godot 4.x development focusing on architecture, performance, and maintainability.
+globs: **/*
+---
+# Godot 4.x Best Practices
+
+## 1. Architecture & Organization
+- **Composition over Inheritance:** Prefer node components over deep class inheritance (`class_name` per script).
+- **Single Responsibility Principle (SRP):** Split mechanics (health, movement, inventory) into standalone component nodes.
+- **Autoloads (Singletons):** Restrict strictly to global services (EventBus, Save System, Audio Manager). Never store scene-specific state in singletons.
+- **Naming Conventions:** 
+  - *GDScript:* `PascalCase` classes, `snake_case` variables/funcs/signals, `SCREAMING_SNAKE_CASE` constants, `_prefix` private members.
+  - *C#:* `PascalCase` classes/methods, `camelCase` args/locals, `_camelCase` private fields.
+
+## 2. Scene & Node Patterns
+- **Resource Loading:** Use `preload()` for static scenes/resources known at compile time. Use `load()` only for dynamic runtime instantiation.
+- **Node Initialization:** Set properties *before* calling `add_child()` to prevent unnecessary tree update cascades.
+- **Loose Coupling (Signals):** Downwards communication via direct calls; upwards communication via `signals`. Avoid fragile `get_node("../...")` chains.
+- **Node References:** Always prefer `@export` or `%UniqueNode` over hardcoded string paths in `get_node()`. Always define `class_name` for type safety and autocompletion.
+
+## 3. Performance Guidelines
+- **Frame Optimization:** Never run heavy spatial queries (e.g., raycasts), file I/O, or array searches inside `_process` or `_physics_process`. Offload to event-driven inputs (`_input`) or timers.
+- **World Partitioning:** Use dynamic level chunk loading/unloading (via `Area2D`/`Area3D` triggers) for large environments.
+
+## 4. Code Quality & Testing
+- **Warnings:** Treat GDScript editor warnings as fatal errors.
+- **Testability:** Structure core logic in isolated components or pure helper scripts to facilitate unit testing (e.g., via GDUnit4). Tests should be colocated with the files that the test. Testing files must be named with a `_test` prefix.
