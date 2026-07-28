@@ -25,4 +25,4 @@ globs: **/*
 
 ## 4. Code Quality & Testing
 - **Warnings:** Treat GDScript editor warnings as fatal errors.
-- **Testability:** Structure core logic in isolated components or pure helper scripts to facilitate unit testing (e.g., via GDUnit4). Tests should be colocated with the files that the test. Testing files must be named with a `_test` prefix.
+- **Testability:** Structure core logic in isolated components or pure helper scripts to facilitate unit testing (e.g., via GDUnit4). Tests should be colocated with the files they test, using a `_test` suffix (e.g. `health_component.gd` → `health_component_test.gd`). Test methods must start with `test_` and extend `GdUnitTestSuite`.
