@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://src/player/player.gd" id="1"]
+[ext_resource type="Script" path="res://systems/components/input_component/input_component.gd" id="2"]
+[ext_resource type="Script" path="res://systems/components/movement_component/movement_component.gd" id="3"]
+[ext_resource type="Script" path="res://systems/components/look_component/look_component.gd" id="4"]
+[ext_resource type="Script" path="res://systems/components/camera_switch_component/camera_switch_component.gd" id="5"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1"]
+radius = 0.35
+height = 1.8
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("input_component", "movement_component", "look_component", "camera_switch_component", "camera_arm")]
+script = ExtResource("1")
+input_component = NodePath("InputComponent")
+movement_component = NodePath("MovementComponent")
+look_component = NodePath("LookComponent")
+camera_switch_component = NodePath("CameraSwitchComponent")
+camera_arm = NodePath("CameraPivot/SpringArm3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_1")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="FirstPersonCamera" type="Camera3D" parent="CameraPivot"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+spring_length = 4.0
+
+[node name="ThirdPersonCamera" type="Camera3D" parent="CameraPivot/SpringArm3D"]
+
+[node name="InputComponent" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="MovementComponent" type="Node" parent="."]
+script = ExtResource("3")
+
+[node name="LookComponent" type="Node" parent="." node_paths=PackedStringArray("yaw_node", "pitch_node")]
+script = ExtResource("4")
+yaw_node = NodePath("..")
+pitch_node = NodePath("../CameraPivot")
+
+[node name="CameraSwitchComponent" type="Node" parent="." node_paths=PackedStringArray("cameras")]
+script = ExtResource("5")
+cameras = [NodePath("../CameraPivot/FirstPersonCamera"), NodePath("../CameraPivot/SpringArm3D/ThirdPersonCamera")]

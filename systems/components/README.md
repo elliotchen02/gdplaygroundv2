@@ -24,3 +24,7 @@ Copy `template_component/`, follow its README checklist.
 ## Catalog
 
 - `template_component/` — the canonical component anatomy to copy. Not used at runtime.
+- `input_component/` — turns device input into movement intent (a move axis, look delta, and request signals) so actors never name an action themselves.
+- `movement_component/` — moves a `CharacterBody3D`: acceleration, gravity, and jumping via a single `move_and_slide()`.
+- `look_component/` — applies a look delta as yaw on one node and clamped pitch on another.
+- `camera_switch_component/` — owns which of an ordered list of `Camera3D`s is the active one.
