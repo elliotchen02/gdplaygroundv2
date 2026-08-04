@@ -15,13 +15,20 @@ signal camera_activated(camera: Camera3D)
 ## Cameras in switch order. Index 0 is active on ready.
 @export var cameras: Array[Camera3D] = []
 
+@export_group("Runtime")
+## When false, `_ready` does not claim the viewport; the host calls `activate()`
+## itself once it knows this copy should be seen through. Because children ready
+## before parents, a remote player's camera would otherwise steal the viewport
+## before any host-side gating could run. A neutral flag — no networking concept.
+@export var activates_on_ready: bool = true
+
 var _active_index: int = 0
 
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
-	if not cameras.is_empty():
+	if activates_on_ready and not cameras.is_empty():
 		activate(0)
 
 

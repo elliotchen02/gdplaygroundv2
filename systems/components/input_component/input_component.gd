@@ -27,11 +27,20 @@ signal camera_toggle_requested
 ## InputMap action for switching camera perspective.
 @export var toggle_camera_action: StringName = &"toggle_camera"
 
+@export_group("Runtime")
+## When false, the component ignores this device entirely. The game clears it on
+## player copies it does not own, so a remote player never reads this machine's
+## keyboard or mouse. A neutral flag — the component names no networking concept.
+@export var reads_input: bool = true:
+	set(value):
+		reads_input = value
+		_update_input_processing()
+
 var _look_delta: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
-	set_process_unhandled_input(not Engine.is_editor_hint())
+	_update_input_processing()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -57,6 +66,10 @@ func consume_look_delta() -> Vector2:
 	var delta: Vector2 = _look_delta
 	_look_delta = Vector2.ZERO
 	return delta
+
+
+func _update_input_processing() -> void:
+	set_process_unhandled_input(reads_input and not Engine.is_editor_hint())
 
 
 func _get_configuration_warnings() -> PackedStringArray:

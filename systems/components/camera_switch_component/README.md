@@ -18,3 +18,7 @@ Select the active camera. It owns no input and names no game class, which is wha
 - `camera_activated(camera: Camera3D)` — past tense, minimum payload, for anything that reacts to the switch (a viewmodel hiding itself in third person, later).
 
 Keeping an ordered list rather than a two-camera boolean means adding a shoulder or top-down view is a scene edit, not a code change.
+
+## Runtime
+
+`activates_on_ready` (default true) decides whether `_ready` claims the viewport. Because children ready before parents, a remote player's camera would otherwise steal the viewport before any host-side gating could run; the game clears the flag on copies it does not own and calls `activate()` itself once authority is known. A neutral flag naming no networking concept.

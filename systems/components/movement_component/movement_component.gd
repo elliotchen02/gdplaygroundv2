@@ -34,6 +34,16 @@ signal landed
 ## Height a jump from a standstill reaches, in metres.
 @export_range(0.1, 5.0, 0.05) var jump_height: float = 1.2
 
+@export_group("Runtime")
+## When false, the component stops driving the body: no gravity, no
+## `move_and_slide()`. A non-simulating body is a passive record whose transform
+## is written from outside (e.g. an authoritative network state). A neutral
+## flag — the component names no networking concept.
+@export var simulates: bool = true:
+	set(value):
+		simulates = value
+		_update_simulation()
+
 var _move_direction: Vector3 = Vector3.ZERO
 var _jump_queued: bool = false
 var _was_on_floor: bool = true
@@ -45,6 +55,7 @@ func _ready() -> void:
 		return
 	if body == null:
 		body = get_parent() as CharacterBody3D
+	_update_simulation()
 
 
 func _physics_process(delta: float) -> void:
@@ -85,6 +96,10 @@ func set_move_direction(direction: Vector3) -> void:
 ## Queues a jump, honoured on the next physics tick if the body is grounded.
 func jump() -> void:
 	_jump_queued = true
+
+
+func _update_simulation() -> void:
+	set_physics_process(simulates and not Engine.is_editor_hint())
 
 
 func is_grounded() -> bool:

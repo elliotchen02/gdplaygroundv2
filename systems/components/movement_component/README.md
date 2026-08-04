@@ -22,3 +22,7 @@ Translate a world-space direction and a jump request into velocity and motion. I
 - `jumped`, `landed` — edge-detected floor-transition signals.
 
 Godot ticks a parent before its children, so intent set in the host's `_physics_process` lands in the same tick.
+
+## Runtime
+
+`simulates` (default true) gates `_physics_process` via its setter. When false the component stops driving the body — no gravity, no `move_and_slide()` — so the body becomes a passive record whose transform is written from outside (e.g. an authoritative network state). A neutral flag naming no networking concept.

@@ -17,3 +17,7 @@ Six action names arrive via `@export` (`move_left/right/forward/back`, `jump`, `
 - `jump_requested`, `camera_toggle_requested` — edge-triggered signals emitted from `_unhandled_input`, so a press is never double-read or dropped when tick rate and frame rate disagree.
 
 Continuous state is pulled; discrete events are pushed. Gamepad look would be added here as another source feeding `consume_look_delta()`, with no change to consumers.
+
+## Runtime
+
+`reads_input` (default true) gates `_unhandled_input` via its setter. A neutral flag naming no networking concept: the game clears it on player copies it does not own so a remote player never reads this machine's keyboard or mouse.
