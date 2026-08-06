@@ -27,6 +27,7 @@ export_credentials.cfg
 addons/inkscape-mcp/
 .idea/
 .vs/
+.vscode/
 *.vsproj
 *.sln
 .cursor/*
