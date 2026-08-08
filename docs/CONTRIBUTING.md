@@ -30,15 +30,21 @@ worktree so both branches stay checked out at once:
 
 ```bash
 git worktree list                                     # what already exists
-git worktree add ../gdskeleton-<branch> -b <branch> origin/main
-# ... work in ../gdskeleton-<branch> ...
-git worktree remove ../gdskeleton-<branch>            # when the PR is merged
+git worktree add ../worktrees/<branch> -b <branch> origin/main
+# ... work in ../worktrees/<branch> ...
+git worktree remove ../worktrees/<branch>             # as soon as the PR merges
 ```
 
-Worktrees live **beside** the repo (`../gdskeleton-<branch>`), never inside it —
-a worktree nested under `gdskeleton/` would be picked up by Godot as project
-content. Each worktree is a full Godot project directory and re-imports into its
-own `.godot/`, which is git-ignored and expected.
+All worktrees live under the shared `worktrees/` directory, **beside** the
+repo (`../worktrees/<branch>`), never inside it — a worktree nested under
+`gdskeleton/` would be picked up by Godot as project content. Each worktree is
+a full Godot project directory and re-imports into its own `.godot/`, which is
+git-ignored and expected.
+
+**Remove the worktree as soon as its PR merges** — `git worktree remove
+../worktrees/<branch>`, then `git worktree prune` if the directory was deleted
+by hand instead. A stale worktree left behind after merge just accumulates
+disk and confuses `git worktree list`.
 
 ## Pull requests
 
