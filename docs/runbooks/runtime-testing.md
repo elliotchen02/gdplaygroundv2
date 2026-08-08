@@ -134,6 +134,12 @@ tugged backward" is client-side. Watch both.
 
 Anything visual. Physics-interpolation jitter on observer bodies and the camera
 rig is a rendering artifact and is invisible here — that is a tier 3b question.
+
+Before writing smoothing code for that jitter, check the setting: `project.godot`
+does not set `physics/common/physics_interpolation`, and Godot defaults it to
+`false` (verified 2026-08-08 by reading it back from a headless run). Observers
+are written from the network at physics rate, so with interpolation off they
+stutter at any framerate above the tick.
 Conversely, if the logs show the server rejecting legitimate movement, that is
 validator logic (`systems/components/movement_validator_component/`) and no
 amount of looking at the game will show it.

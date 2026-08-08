@@ -2,12 +2,16 @@
 
 Godot 4.7 multiplayer 3D skeleton. **GDScript only**, Forward+, Jolt physics.
 Engine: `/Applications/Godot.app/Contents/MacOS/Godot`, overridable via
-`GODOT_BIN`. Physics interpolation is **off** — `project.godot` does not set
-`physics/common/physics_interpolation`, and Godot defaults it to `false`.
+`GODOT_BIN`.
 
 Detailed docs live next to the code: every directory has a `README.md`, and
 `systems/` and `src/` have their own `CLAUDE.md` that loads when you read files
 there. Read the local `README.md` before working in a directory.
+
+**Keep every `CLAUDE.md` small — durable rules only.** Anything readable from
+the code or `project.godot`, any one-off finding, rationale, or note explaining
+why an earlier doc was wrong, belongs in `docs/` or a directory `README.md`.
+Prefer replacing a line over appending one.
 
 ## Working Style
 
@@ -89,12 +93,11 @@ gdUnit4. Tests are **colocated** with the code they test using a `_test` suffix
 
 - Component logic → a gdUnit4 suite building its nodes by hand.
 - Scene behaviour under real input actions → gdUnit4 `scene_runner()`.
-- Multiplayer claim-and-correct → run the engine headless as two peers, grep the logs.
+- Multiplayer claim-and-correct → the engine run headless as two peers.
 - Looks wrong — jitter, camera, framing → godot-mcp, editor open.
 
 **If you would want to run the check again next week, it is a gdUnit4 test.**
-Reach for godot-mcp only when the answer exists solely in a rendered frame; its
-observations are not reproducible and do not run in CI.
+godot-mcp observations are not reproducible and do not run in CI.
 
 `addons/godot_mcp/` and the server pinned in `.mcp.json` must stay version-matched.
 
