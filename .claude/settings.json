@@ -1,0 +1,19 @@
+{
+	"permissions": {
+		"allow": [
+			"mcp__godot-mcp__godot_node_read",
+			"mcp__godot-mcp__godot_editor_read",
+			"mcp__godot-mcp__godot_animation_read",
+			"mcp__godot-mcp__godot_tilemap_read",
+			"mcp__godot-mcp__godot_gridmap_read",
+			"mcp__godot-mcp__godot_resource",
+			"mcp__godot-mcp__godot_scene3d",
+			"mcp__godot-mcp__godot_docs",
+			"mcp__godot-mcp__godot_profiler",
+			"mcp__godot-mcp__godot_runtime_state",
+			"mcp__godot-mcp__godot_validate_meshes",
+			"Bash(./hack/run-changed-tests.sh:*)",
+			"Bash(./addons/gdUnit4/runtest.sh:*)"
+		]
+	}
+}
