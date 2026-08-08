@@ -50,10 +50,10 @@ disk and confuses `git worktree list`.
 
 1. Commit in logical units using the commit convention below.
 2. Push and set upstream: `git push -u origin <branch>`.
-3. Open the PR against `main` on GitHub. Plain `git push` prints a *"Create a
-   pull request"* URL for the branch — use it. (`gh` is **not installed** on
-   this machine as of 2026-08-08, verified via `command -v gh`; if it is
-   installed later, `gh pr create --base main` does the same job.)
+3. Open the PR against `main`: `gh pr create --base main` (`gh` 2.97.0 is
+   installed and authenticated as `elliotchen02`, verified 2026-08-08). Without
+   `gh`, plain `git push` prints a *"Create a pull request"* URL for the branch
+   — use that instead.
 4. PR description: what changed and **why**, which directories it touches, how
    it was verified (which test suites ran, whether a headless or windowed run
    was needed), and a link to its `plans/` file if it has one.
