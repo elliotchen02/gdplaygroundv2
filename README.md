@@ -26,9 +26,7 @@ export GODOT_BIN=/Applications/Godot.app/Contents/MacOS/Godot
 "$GODOT_BIN" --headless --path . -- --join=127.0.0.1 > client.log 2>&1 &
 ```
 
-The flags after `--` are parsed in [`src/net/net_session.gd`](src/net/net_session.gd):
-`--host`, `--join[=address]`, `--port=N` (default `24545`). No network flag
-means host, so a bare launch starts a local session.
+The flags after `--` are documented in [`src/net/README.md`](src/net/README.md).
 
 ## Architecture
 
