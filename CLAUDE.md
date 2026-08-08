@@ -1,8 +1,9 @@
 # CLAUDE.md
 
-Godot 4.7 multiplayer 3D skeleton. **GDScript only**, Forward+, Jolt physics,
-physics interpolation on. Engine: `/Applications/Godot.app/Contents/MacOS/Godot`,
-overridable via `GODOT_BIN`.
+Godot 4.7 multiplayer 3D skeleton. **GDScript only**, Forward+, Jolt physics.
+Engine: `/Applications/Godot.app/Contents/MacOS/Godot`, overridable via
+`GODOT_BIN`. Physics interpolation is **off** — `project.godot` does not set
+`physics/common/physics_interpolation`, and Godot defaults it to `false`.
 
 Detailed docs live next to the code: every directory has a `README.md`, and
 `systems/` and `src/` have their own `CLAUDE.md` that loads when you read files

@@ -1,7 +1,7 @@
 # gdskeleton
 
 A Godot 4.7 multiplayer 3D skeleton: GDScript only, Forward+ rendering, Jolt
-physics, physics interpolation on. A starting point for a first-person
+physics. A starting point for a first-person
 multiplayer game, built around a **client-simulated, server-validated**
 network model and a **composition-over-inheritance** component architecture.
 
@@ -17,15 +17,18 @@ Open the project in the Godot editor and run `src/main.tscn` (the default
 `run/main_scene`). A bare launch hosts a session so a single F5 works.
 
 To try multiplayer, launch two instances via the editor's *Debug > Customize
-Run Instances*, or headless:
+Run Instances*, or run the engine headless once per peer. The engine binary is
+not on `PATH`, so go through `GODOT_BIN`:
 
 ```bash
-godot --headless -- --host
-godot --headless -- --join=127.0.0.1
+export GODOT_BIN=/Applications/Godot.app/Contents/MacOS/Godot
+"$GODOT_BIN" --headless --path . -- --host           > host.log 2>&1 &
+"$GODOT_BIN" --headless --path . -- --join=127.0.0.1 > client.log 2>&1 &
 ```
 
-`./hack/run-headless.sh 2 --auto-move --duration 15` spins up two headless
-peers and writes their output to `hack/logs/` (git-ignored).
+The flags after `--` are parsed in [`src/net/net_session.gd`](src/net/net_session.gd):
+`--host`, `--join[=address]`, `--port=N` (default `24545`). No network flag
+means host, so a bare launch starts a local session.
 
 ## Architecture
 
@@ -51,7 +54,7 @@ assets/   →  contains no scripts
 - **`assets/`** — art and audio, no scripts.
 - **`addons/`** — third-party and internal editor tooling: `gdUnit4` (test
   runner) and `godot_mcp` (an editor MCP bridge for tool-assisted development).
-- **`hack/`** — developer scripts (test runners, headless multiplayer harness).
+- **`hack/`** — developer scripts, chiefly the changed-file test runner.
 - **`reports/`** — generated test output, git-ignored.
 
 See each directory's `README.md` for the full detail, and
@@ -72,14 +75,19 @@ See [`src/net/README.md`](src/net/README.md) and
 
 ## Testing
 
-[gdUnit4](https://github.com/MikeSchulze/gdUnit4), colocated with the code it
-tests (`movement_component.gd` → `movement_component_test.gd`).
+[gdUnit4](https://github.com/godot-gdunit-labs/gdUnit4), colocated with the code
+it tests (`movement_component.gd` → `movement_component_test.gd`).
 
 ```bash
 ./hack/run-changed-tests.sh                  # tests for changed .gd files
 ./hack/run-changed-tests.sh --staged         # staged only (pre-commit)
 ./addons/gdUnit4/runtest.sh -a res://path/to/suite_test.gd   # one suite
 ```
+
+Runtime behaviour is tested in tiers — a gdUnit4 suite, a `scene_runner()` scene
+test, a headless multi-peer run, or godot-mcp for what only exists in a rendered
+frame. [`docs/runbooks/runtime-testing.md`](docs/runbooks/runtime-testing.md)
+says which to reach for.
 
 ## Contributing
 
