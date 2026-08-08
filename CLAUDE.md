@@ -1,12 +1,17 @@
 # CLAUDE.md
 
-Godot 4.7 multiplayer 3D skeleton. **GDScript only**, Forward+, Jolt physics,
-physics interpolation on. Engine: `/Applications/Godot.app/Contents/MacOS/Godot`,
-overridable via `GODOT_BIN`.
+Godot 4.7 multiplayer 3D skeleton. **GDScript only**, Forward+, Jolt physics.
+Engine: `/Applications/Godot.app/Contents/MacOS/Godot`, overridable via
+`GODOT_BIN`.
 
 Detailed docs live next to the code: every directory has a `README.md`, and
 `systems/` and `src/` have their own `CLAUDE.md` that loads when you read files
 there. Read the local `README.md` before working in a directory.
+
+**Keep every `CLAUDE.md` small — durable rules only.** Anything readable from
+the code or `project.godot`, any one-off finding, rationale, or note explaining
+why an earlier doc was wrong, belongs in `docs/` or a directory `README.md`.
+Prefer replacing a line over appending one.
 
 ## Working Style
 
@@ -31,7 +36,7 @@ there. Read the local `README.md` before working in a directory.
 ./hack/run-changed-tests.sh                  # gdUnit4 tests for changed .gd files
 ./hack/run-changed-tests.sh --staged         # staged only (pre-commit)
 ./addons/gdUnit4/runtest.sh -a res://path/to/suite_test.gd   # one suite
-./hack/run-headless.sh 2 --auto-move --duration 15           # headless peers → hack/logs/
+"$GODOT_BIN" --headless --path . -- --host   # headless peer; --join=127.0.0.1 for a client
 ```
 
 Test reports land in `reports/` (git-ignored).
@@ -81,6 +86,20 @@ compose it into the game under `src/`. Prototype in `sandbox/` when unsure.
 gdUnit4. Tests are **colocated** with the code they test using a `_test` suffix
 (`movement_component.gd` → `movement_component_test.gd`). A suite
 `extends GdUnitTestSuite`; test methods start with `test_`.
+
+### Which runtime tier
+
+**Read `docs/runbooks/runtime-testing.md` before testing at runtime.**
+
+- Component logic → a gdUnit4 suite building its nodes by hand.
+- Scene behaviour under real input actions → gdUnit4 `scene_runner()`.
+- Multiplayer claim-and-correct → the engine run headless as two peers.
+- Looks wrong — jitter, camera, framing → godot-mcp, editor open.
+
+**If you would want to run the check again next week, it is a gdUnit4 test.**
+godot-mcp observations are not reproducible and do not run in CI.
+
+`addons/godot_mcp/` and the server pinned in `.mcp.json` must stay version-matched.
 
 ## Contributing
 

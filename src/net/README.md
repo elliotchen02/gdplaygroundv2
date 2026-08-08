@@ -28,9 +28,9 @@ Owns only the session lifecycle: `host(port)`, `join(address, port)`, `leave()`,
 
 Launch two instances via *Debug > Customize Run Instances* with `--host` and `--join=127.0.0.1`, or headless:
 
-```
-godot --headless -- --host
-godot --headless -- --join=127.0.0.1
+```bash
+"$GODOT_BIN" --headless --path . -- --host
+"$GODOT_BIN" --headless --path . -- --join=127.0.0.1
 ```
 
 Expect two players; each window drives only its own; neither view is hijacked by the other's camera; the host sees both move. A deliberate teleport on a client (setting its own `global_position` far away) is rejected by the server, never seen by the other peer, and snapped back on the offender with visual smoothing.
