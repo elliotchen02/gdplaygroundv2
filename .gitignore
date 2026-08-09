@@ -8,6 +8,7 @@
 # Test Artifacts
 # ==========================================
 reports/
+hack/logs/
 
 # ==========================================
 # Build and Export Exclusions
