@@ -8,10 +8,6 @@ Detailed docs live next to the code: every directory has a `README.md`, and
 `systems/` and `src/` have their own `CLAUDE.md` that loads when you read files
 there. Read the local `README.md` before working in a directory.
 
-`.claude/rules/` holds working agreements that are too long to live here. Read
-the matching rule before that kind of work — creating or editing any
-`CLAUDE.md` → `.claude/rules/claude-md-maintenance.md`.
-
 **Keep every `CLAUDE.md` small — durable rules only.** Anything readable from
 the code or `project.godot`, any one-off finding, rationale, or note explaining
 why an earlier doc was wrong, belongs in `docs/` or a directory `README.md`.
