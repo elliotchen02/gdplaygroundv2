@@ -12,11 +12,17 @@ const _PLAYER_SCENE: PackedScene = preload("res://src/player/player.tscn")
 @export var players: Node3D
 ## Optional Marker3D parent; players spawn at its children in round-robin order.
 @export var spawn_points: Node3D
+## Replicates spawned players. Driven by a custom spawn function so identity and
+## placement travel in the spawn packet itself.
+@export var player_spawner: MultiplayerSpawner
 
 var _next_spawn: int = 0
 
 
 func _ready() -> void:
+	# Registered before any session starts: a client needs it the moment the first
+	# spawn packet lands.
+	player_spawner.spawn_function = _build_player
 	# A headless/dedicated server has no window and must not grab the mouse.
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -55,16 +61,34 @@ func _on_peer_disconnected(id: int) -> void:
 		return
 	var node: Node = players.get_node_or_null(str(id))
 	if node != null:
+		print("[despawn] owner=%d" % id)
 		node.queue_free()
 
 
 func _spawn_player(id: int) -> void:
-	# Name is the peer id: every peer derives the player's authority from it, and
-	# the MultiplayerSpawner replicates the node — name and all — to clients.
+	# `spawn` adds the node under `spawn_path` itself, here and on every client.
+	player_spawner.spawn({"id": id, "position": _next_spawn_position()})
+
+
+## Builds a player from replicated spawn data. Runs on every peer — the server
+## through `spawn()`, each client when the packet arrives — so ownership and
+## placement are set identically before the node enters the tree.
+##
+## Both travel here rather than on a synchronizer: visibility cannot be trusted
+## to deliver spawn state to one peer and withhold it from another, and a node
+## name is a lossy peer id ("Player" reads as 0).
+func _build_player(data: Variant) -> Node:
+	var spawn_data: Dictionary = data as Dictionary
+	var id: int = spawn_data["id"]
 	var player: Player = _PLAYER_SCENE.instantiate()
+	# Still mirrors the peer id: replication addresses nodes by path.
 	player.name = str(id)
-	player.position = _next_spawn_position()
-	players.add_child(player)
+	player.position = spawn_data["position"]
+	player.player_network.owner_id = id
+	# Grepped to verify a headless run: silence used to be indistinguishable from
+	# a session that connected and replicated nothing.
+	print("[spawn] peer=%d owner=%d at %v" % [multiplayer.get_unique_id(), id, player.position])
+	return player
 
 
 func _next_spawn_position() -> Vector3:

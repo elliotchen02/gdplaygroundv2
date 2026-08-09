@@ -28,8 +28,11 @@ Copy `template_component/`, follow its README checklist.
 - `movement_component/` — moves a `CharacterBody3D`: acceleration, gravity, and jumping via a single `move_and_slide()`.
 - `look_component/` — applies a look delta as yaw on one node and clamped pitch on another.
 - `camera_switch_component/` — owns which of an ordered list of `Camera3D`s is the active one.
-- `movement_validator_component/` — pure server-side arithmetic that decides whether a claimed position was physically reachable, and what to accept instead.
+- `movement_validator_component/` — pure server-side arithmetic that decides whether a claimed position was physically reachable, and what to accept instead. Currently parked; see `src/player/player_network.gd`.
+- `snapshot_buffer_component/` — keeps the last N states an actor was reported in, keyed by tick, and interpolates between them. Turns bursty network delivery into continuous motion.
 
 ## Runtime toggles
 
 `input_component`, `movement_component`, and `camera_switch_component` each carry a neutral runtime flag (`reads_input`, `simulates`, `activates_on_ready`) in a "Runtime" group. They name no networking concept; the game clears them on player copies it does not own, so a remote player never reads this machine's input, fights the network with its own physics, or steals the viewport.
+
+`look_component` serves the same purpose through a method rather than a flag: `set_pitch()` poses a head from something other than a device — a replay, a cutscene, or a remote player whose pitch arrived over the wire — and clamps it to the same limit `look()` obeys.

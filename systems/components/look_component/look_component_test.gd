@@ -64,3 +64,25 @@ func test_yaw_and_pitch_land_on_separate_nodes() -> void:
 	assert_float(component.yaw_node.rotation.z).is_equal(0.0)
 	assert_float(component.pitch_node.rotation.y).is_equal(0.0)
 	assert_float(component.pitch_node.rotation.z).is_equal(0.0)
+
+
+func test_set_pitch_applies_and_clamps() -> void:
+	var component: LookComponent = _make_look()
+	component.set_pitch(0.4)
+	assert_float(component.pitch_node.rotation.x).is_equal_approx(0.4, 0.0001)
+	assert_float(component.pitch()).is_equal_approx(0.4, 0.0001)
+	# Same limit `look` obeys, so a pose fed in from elsewhere cannot put a head
+	# somewhere the device could never have.
+	component.set_pitch(100.0)
+	assert_float(component.pitch_node.rotation.x).is_equal_approx(
+		deg_to_rad(_MAX_PITCH_DEGREES), 0.0001
+	)
+
+
+func test_look_continues_from_a_pitch_set_directly() -> void:
+	var component: LookComponent = _make_look()
+	component.set_pitch(0.2)
+	component.look(Vector2(0.0, -100.0))
+	assert_float(component.pitch_node.rotation.x).is_equal_approx(
+		0.2 + 100.0 * _SENSITIVITY, 0.0001
+	)

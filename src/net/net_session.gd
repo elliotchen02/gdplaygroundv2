@@ -35,6 +35,7 @@ func host(port: int = DEFAULT_PORT) -> Error:
 		push_error("NetSession: could not host on port %d (error %d)." % [port, err])
 		return err
 	multiplayer.multiplayer_peer = peer
+	print("[net] hosting on port %d" % port)
 	session_started.emit()
 	return OK
 
@@ -48,6 +49,7 @@ func join(address: String = "", port: int = DEFAULT_PORT) -> Error:
 		push_error("NetSession: could not join %s:%d (error %d)." % [resolved, port, err])
 		return err
 	multiplayer.multiplayer_peer = peer
+	print("[net] joining %s:%d" % [resolved, port])
 	session_started.emit()
 	return OK
 
@@ -58,6 +60,7 @@ func leave() -> void:
 		return
 	multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = null
+	print("[net] session ended")
 	session_ended.emit()
 
 

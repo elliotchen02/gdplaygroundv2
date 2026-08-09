@@ -1,12 +1,11 @@
-[gd_scene format=3 uid="uid://bsvm1t2pxbm26"]
+[gd_scene load_steps=9 format=3 uid="uid://bsvm1t2pxbm26"]
 
 [ext_resource type="Script" uid="uid://dmemx7tknot6k" path="res://src/player/player.gd" id="1"]
 [ext_resource type="Script" uid="uid://biucb4dgu37u1" path="res://systems/components/input_component/input_component.gd" id="2"]
 [ext_resource type="Script" uid="uid://bcgwrhees805i" path="res://systems/components/movement_component/movement_component.gd" id="3"]
 [ext_resource type="Script" uid="uid://b6omki6ste0hg" path="res://systems/components/look_component/look_component.gd" id="4"]
 [ext_resource type="Script" uid="uid://bpflifd4ugycr" path="res://systems/components/camera_switch_component/camera_switch_component.gd" id="5"]
-[ext_resource type="Script" uid="uid://c0d8po7i4aa8u" path="res://src/player/player_network.gd" id="6"]
-[ext_resource type="Script" uid="uid://d3owmuorwlygm" path="res://systems/components/movement_validator_component/movement_validator_component.gd" id="7"]
+[ext_resource type="PackedScene" path="res://src/player/player_network.tscn" id="6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -16,35 +15,15 @@ height = 1.8
 radius = 0.35
 height = 1.8
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_claim"]
-properties/0/path = NodePath("PlayerNetwork:claimed_position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath("PlayerNetwork:claimed_velocity")
-properties/1/spawn = true
-properties/1/replication_mode = 1
-properties/2/path = NodePath("PlayerNetwork:claimed_yaw")
-properties/2/spawn = true
-properties/2/replication_mode = 1
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_state"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:velocity")
-properties/1/spawn = true
-properties/1/replication_mode = 1
-properties/2/path = NodePath(".:rotation")
-properties/2/spawn = true
-properties/2/replication_mode = 1
-
-[node name="Player" type="CharacterBody3D" unique_id=1104708020 node_paths=PackedStringArray("input_component", "movement_component", "look_component", "camera_switch_component", "camera_arm")]
+[node name="Player" type="CharacterBody3D" unique_id=1104708020 node_paths=PackedStringArray("input_component", "movement_component", "look_component", "camera_switch_component", "player_network", "camera_arm", "collision_shape")]
 script = ExtResource("1")
 input_component = NodePath("InputComponent")
 movement_component = NodePath("MovementComponent")
 look_component = NodePath("LookComponent")
 camera_switch_component = NodePath("CameraSwitchComponent")
+player_network = NodePath("PlayerNetwork")
 camera_arm = NodePath("CameraPivot/SpringArm3D")
+collision_shape = NodePath("CollisionShape3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=685491309]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -81,24 +60,5 @@ pitch_node = NodePath("../CameraPivot")
 script = ExtResource("5")
 cameras = [NodePath("../CameraPivot/FirstPersonCamera"), NodePath("../CameraPivot/SpringArm3D/ThirdPersonCamera")]
 
-[node name="MovementValidatorComponent" type="Node" parent="."]
-script = ExtResource("7")
-max_speed = 10.0
-
-[node name="PlayerNetwork" type="Node" parent="." node_paths=PackedStringArray("claim_synchronizer", "state_synchronizer", "movement_validator", "camera_arm", "mesh", "camera_pivot")]
-script = ExtResource("6")
-claim_synchronizer = NodePath("../ClaimSynchronizer")
-state_synchronizer = NodePath("../StateSynchronizer")
-movement_validator = NodePath("../MovementValidatorComponent")
-camera_arm = NodePath("../CameraPivot/SpringArm3D")
-mesh = NodePath("../Mesh")
-camera_pivot = NodePath("../CameraPivot")
-
-[node name="ClaimSynchronizer" type="MultiplayerSynchronizer" parent="."]
-root_path = NodePath("..")
-replication_config = SubResource("SceneReplicationConfig_claim")
-public_visibility = false
-
-[node name="StateSynchronizer" type="MultiplayerSynchronizer" parent="."]
-root_path = NodePath("..")
-replication_config = SubResource("SceneReplicationConfig_state")
+[node name="PlayerNetwork" parent="." node_paths=PackedStringArray("body") instance=ExtResource("6")]
+body = NodePath("..")
