@@ -1,0 +1,63 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" uid="uid://c0d8po7i4aa8u" path="res://src/player/player_network.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3owmuorwlygm" path="res://systems/components/movement_validator_component/movement_validator_component.gd" id="2"]
+[ext_resource type="Script" uid="uid://hfxmx6j7fwmr" path="res://systems/components/snapshot_buffer_component/snapshot_buffer_component.gd" id="3"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_claim"]
+properties/0/path = NodePath(".:claimed_tick")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:claimed_position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:claimed_velocity")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:claimed_yaw")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath(".:claimed_pitch")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_state"]
+properties/0/path = NodePath(".:net_tick")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:net_position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:net_velocity")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:net_yaw")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath(".:net_pitch")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+
+[node name="PlayerNetwork" type="Node" node_paths=PackedStringArray("claim_synchronizer", "state_synchronizer", "movement_validator", "snapshot_buffer")]
+script = ExtResource("1")
+claim_synchronizer = NodePath("ClaimSynchronizer")
+state_synchronizer = NodePath("StateSynchronizer")
+movement_validator = NodePath("MovementValidatorComponent")
+snapshot_buffer = NodePath("SnapshotBufferComponent")
+
+[node name="MovementValidatorComponent" type="Node" parent="."]
+script = ExtResource("2")
+max_speed = 10.0
+
+[node name="SnapshotBufferComponent" type="Node" parent="."]
+script = ExtResource("3")
+
+[node name="ClaimSynchronizer" type="MultiplayerSynchronizer" parent="."]
+root_path = NodePath("..")
+replication_interval = 0.033
+replication_config = SubResource("SceneReplicationConfig_claim")
+
+[node name="StateSynchronizer" type="MultiplayerSynchronizer" parent="."]
+root_path = NodePath("..")
+replication_interval = 0.05
+replication_config = SubResource("SceneReplicationConfig_state")

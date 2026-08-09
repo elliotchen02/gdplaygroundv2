@@ -42,13 +42,13 @@ assert_float(runner.get_property("velocity").length()).is_greater(0.0)
 
 ### Two traps
 
-**Authority comes from the node name.** `PlayerNetwork._enter_tree()` reads
-`_player.name.to_int()`, so a scene loaded straight from disk is named `Player`,
-yields `0`, matches no peer, and resolves to `SERVER_RECORD` — which switches
-`movement_component.simulates` and `input_component.reads_input` off. Assertions
-then run against a body that was never going to move, with nothing printed. Name
-the instance after the owning peer, as `src/main.gd:_spawn_player` does, and
-assert the role took; `src/player/player_test.gd` does both.
+**A copy that resolves to the wrong role never moves.** `SERVER_RECORD` and
+`OBSERVER` both switch `movement_component.simulates` and
+`input_component.reads_input` off, so assertions run against a body that was
+never going to move, with nothing printed. `PlayerNetwork.owner_id` defaults to
+`1` and a suite's peer id is `1`, so a scene loaded from disk comes up as
+`OWNER` — but assert the role took rather than assuming it, as
+`src/player/player_test.gd` does.
 
 **`scene_runner()` only frees a scene it loaded from a path.** Handed a Node it
 leaves ownership with the caller — `auto_free()` it, or every test leaks the
@@ -64,15 +64,15 @@ default `World3D`, so the runner's scene collides with it.
 For anything involving two peers. godot-mcp **cannot** do this: it drives a
 single game instance and the bridge enforces one client at a time.
 
-Peers are plain OS processes — no wrapper script, just the engine once per peer.
-The CLI flags are documented at `src/net/README.md`.
+Peers are plain OS processes, one engine per peer. `./hack/run-headless.sh`
+wraps that, and `--auto-move` drives them without a keyboard:
 
 ```bash
-"$GODOT_BIN" --headless --path . -- --host           > /tmp/host.log 2>&1 &
-"$GODOT_BIN" --headless --path . -- --join=127.0.0.1 > /tmp/client.log 2>&1 &
-grep -nE 'REJECT|force_state|strikes|ERROR|WARNING' /tmp/host.log /tmp/client.log
-kill %1 %2
+./hack/run-headless.sh 2 --auto-move --duration 12
+grep -nE 'spawn|force_state|REJECT|ERROR|WARNING' hack/logs/*.log
 ```
+
+The CLI flags it passes are documented at `src/net/README.md`.
 
 ### Which log holds which signal
 
@@ -150,10 +150,10 @@ gates on `EngineDebugger.is_active()`, which `--headless` never sets (verified
 ## Verify
 
 - Tiers 1–2: `./hack/run-changed-tests.sh` exits `0`.
-- Tier 3a: both peers stay up, client log shows no connection error. On `main` a
-  healthy peer prints almost nothing — the `[OWNER]`/`[SERVER_RECORD]` lines are
-  instrumentation from `feat/network-interpolation`. Until it lands, tier 3a
-  proves peers connect, not that the correction loop is right.
+- Tier 3a: **both** peers print one `[spawn]` line per player, each at its own
+  marker. Both players on both peers is what proves replication — a peer that
+  connected and then replicated nothing looks identical to a healthy one if you
+  only check that the process stayed up.
 - Tier 3b: the MCP status panel shows connected, versions equal.
 
 ## Roll back

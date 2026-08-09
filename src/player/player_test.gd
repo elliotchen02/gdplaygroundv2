@@ -29,11 +29,9 @@ func before_test() -> void:
 	# Handed a Node, it leaves ownership here — without auto_free the whole
 	# player subtree leaks as orphans after every test.
 	_player = auto_free(_PLAYER_SCENE.instantiate()) as Player
-	# PlayerNetwork derives authority from the node name. Left as "Player",
-	# name.to_int() is 0, no peer matches, and the player comes up as a
-	# SERVER_RECORD with movement and input switched off — every assertion below
-	# would then run against a body that was never going to move. Name it after
-	# the owning peer, as src/main.gd does. See docs/runbooks/runtime-testing.md.
+	# Named after the owning peer as src/main.gd does. A copy that resolves to
+	# anything but OWNER has movement and input switched off, and every assertion
+	# below would run against a body that was never going to move.
 	_player.name = str(multiplayer.get_unique_id())
 	_runner = scene_runner(_player)
 	await _runner.simulate_frames(4)
