@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bsvm1t2pxbm26"]
+[gd_scene load_steps=10 format=3 uid="uid://bsvm1t2pxbm26"]
 
 [ext_resource type="Script" uid="uid://dmemx7tknot6k" path="res://src/player/player.gd" id="1"]
 [ext_resource type="Script" uid="uid://biucb4dgu37u1" path="res://systems/components/input_component/input_component.gd" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://b6omki6ste0hg" path="res://systems/components/look_component/look_component.gd" id="4"]
 [ext_resource type="Script" uid="uid://bpflifd4ugycr" path="res://systems/components/camera_switch_component/camera_switch_component.gd" id="5"]
 [ext_resource type="PackedScene" path="res://src/player/player_network.tscn" id="6"]
+[ext_resource type="Script" path="res://systems/components/hurtbox_component/hurtbox_component.gd" id="7"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -17,6 +18,8 @@ height = 1.8
 
 [node name="Player" type="CharacterBody3D" unique_id=1104708020 node_paths=PackedStringArray("input_component", "movement_component", "look_component", "camera_switch_component", "player_network", "camera_arm", "collision_shape")]
 script = ExtResource("1")
+collision_layer = 2
+collision_mask = 3
 input_component = NodePath("InputComponent")
 movement_component = NodePath("MovementComponent")
 look_component = NodePath("LookComponent")
@@ -62,3 +65,14 @@ cameras = [NodePath("../CameraPivot/FirstPersonCamera"), NodePath("../CameraPivo
 
 [node name="PlayerNetwork" parent="." node_paths=PackedStringArray("body") instance=ExtResource("6")]
 body = NodePath("..")
+
+[node name="Hurtbox" type="Area3D" parent="." node_paths=PackedStringArray("actor")]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("7")
+actor = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_1")

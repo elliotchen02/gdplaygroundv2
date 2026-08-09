@@ -36,7 +36,7 @@ Both facts travel in the spawn packet deliberately:
 1. **The server's accepted state never lands on a transform directly.** It travels in `PlayerNetwork.net_*` and each role chooses whether to apply it. A visibility filter is not a substitute — see `src/player/README.md` for the measurement.
 2. **Authority is derived identically on every peer** from `owner_id`, delivered in the spawn data, because `set_multiplayer_authority` is not replicated. It is pinned in `_enter_tree`, never `_ready`, or the spawner rejects a synchronizer for having no network ID. Every call is non-recursive: the two synchronizers need opposite authorities, and a recursive set on any ancestor flattens them.
 3. **Claims land in mirror properties** (`claimed_*`), never the real transform, so a claim can never bypass validation by overwriting the server's record.
-4. **Remote copies do not collide.** Their transform is written from the network each tick, which makes them teleporting colliders; `player.gd` disables the collider on every copy this peer does not drive.
+4. **Every copy keeps its collider, so players are solid to one another.** A remote copy's transform is written from the network each tick, but it never calls `move_and_slide`, so it is only ever an obstacle this peer's own player stops against — never a body that shoves. Players sit on the `players` layer and mask `world` + `players`; hit detection is a separate concern on the `hitbox`/`hurtbox` layers (see `src/player/README.md`).
 
 ## Verification
 

@@ -18,8 +18,10 @@ extends CharacterBody3D
 @export var player_network: PlayerNetwork
 ## Spring arm carrying the third-person camera. Excluded from its own collision.
 @export var camera_arm: SpringArm3D
-## Switched off on copies this peer does not drive: their transform is written
-## from the network each tick, making them teleporting colliders that shove.
+## Kept enabled on every copy so players are solid to one another. A remote copy's
+## transform is written from the network each tick, but it never calls
+## `move_and_slide`, so it is an obstacle this peer's own player stops against
+## without being shoved itself.
 @export var collision_shape: CollisionShape3D
 
 var _role: PlayerNetwork.Role = PlayerNetwork.Role.OBSERVER
@@ -37,9 +39,11 @@ func _enter_tree() -> void:
 	# ticks everywhere — a remote copy has a head to point.
 	set_process(is_owner)
 	if collision_shape != null:
+		# Enabled on every copy, owner or not: player-vs-player collision needs the
+		# remote capsules solid so this peer's own move_and_slide stops against them.
 		# Deferred: _enter_tree can land inside a physics flush, which refuses
 		# collider state changes.
-		collision_shape.set_deferred(&"disabled", not is_owner)
+		collision_shape.set_deferred(&"disabled", false)
 	if camera_arm != null:
 		# SpringArm3D shapecasts on an internal tick; disabling the node is the
 		# only way to silence that on a copy no one looks through.
