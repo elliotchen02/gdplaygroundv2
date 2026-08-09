@@ -54,6 +54,22 @@ func look(delta: Vector2) -> void:
 	pitch_node.rotation.x = _pitch
 
 
+## Sets pitch directly, in radians, clamped to the same limit `look` obeys. For
+## copies driven by something other than a device — a replay, a cutscene, or a
+## remote actor whose pitch arrives from elsewhere.
+func set_pitch(radians: float) -> void:
+	if pitch_node == null:
+		return
+	var limit: float = deg_to_rad(max_pitch_degrees)
+	_pitch = clampf(radians, -limit, limit)
+	pitch_node.rotation.x = _pitch
+
+
+## Current pitch in radians.
+func pitch() -> float:
+	return _pitch
+
+
 func _get_configuration_warnings() -> PackedStringArray:
 	if yaw_node == null and not (get_parent() is Node3D):
 		return ["Needs a Node3D parent, or an explicit yaw node assigned."]
