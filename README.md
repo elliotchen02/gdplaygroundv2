@@ -59,33 +59,6 @@ See each directory's `README.md` for the full detail, and
 [`CLAUDE.md`](CLAUDE.md) for the rules an AI agent (or a human) should follow
 when working in this repo.
 
-## The network model
-
-Each client simulates its own player exactly as it would in single player —
-zero input latency, no client-side prediction machinery — and reports the
-*resulting* transform. The server never simulates a player and never sees an
-input; it only checks that each reported position was physically reachable,
-correcting the rare cases that were not. Other clients see only the server's
-accepted state, so a rejected motion never reaches them.
-
-See [`src/net/README.md`](src/net/README.md) and
-[`src/player/README.md`](src/player/README.md) for the full mechanics.
-
-## Testing
-
-[gdUnit4](https://github.com/godot-gdunit-labs/gdUnit4), colocated with the code
-it tests (`movement_component.gd` → `movement_component_test.gd`).
-
-```bash
-./hack/run-changed-tests.sh                  # tests for changed .gd files
-./hack/run-changed-tests.sh --staged         # staged only (pre-commit)
-./addons/gdUnit4/runtest.sh -a res://path/to/suite_test.gd   # one suite
-```
-
-Runtime behaviour is tested in tiers — a gdUnit4 suite, a `scene_runner()` scene
-test, a headless multi-peer run, or godot-mcp for what only exists in a rendered
-frame.
-
 ## Contributing
 
 Read [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) before touching git: never
