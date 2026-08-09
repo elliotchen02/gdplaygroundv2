@@ -25,6 +25,7 @@ export_credentials.cfg
 # IDE & Tooling Ignores
 # ==========================================
 .venv/
+.venv-gdtoolkit/
 addons/inkscape-mcp/
 .idea/
 .vs/
