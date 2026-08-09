@@ -84,5 +84,5 @@ func _get_configuration_warnings() -> PackedStringArray:
 	]
 	for action: StringName in actions:
 		if action.is_empty() or not InputMap.has_action(action):
-			warnings.append("Action \"%s\" is not in the project's InputMap." % action)
+			warnings.append('Action "%s" is not in the project\'s InputMap.' % action)
 	return warnings

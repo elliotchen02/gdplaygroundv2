@@ -54,9 +54,7 @@ func _ready() -> void:
 ## Records the state reported for `tick`. Ignores anything not newer than what is
 ## already held, so a duplicate or a packet that overtook its predecessor cannot
 ## drag the timeline backwards.
-func push(
-	tick: int, position: Vector3, velocity: Vector3, yaw: float, pitch: float = 0.0
-) -> void:
+func push(tick: int, position: Vector3, velocity: Vector3, yaw: float, pitch: float = 0.0) -> void:
 	_ensure_storage()
 	if _count > 0 and tick <= newest_tick():
 		return
@@ -135,9 +133,7 @@ func clear() -> void:
 ## reads as an actor sliding through walls, so the cap is the lesser evil.
 func _extrapolate_from(newest: int, render_tick: float) -> void:
 	var physical: int = _physical(newest)
-	var ahead: float = minf(
-		render_tick - float(_tick_at(newest)), float(max_extrapolation_ticks)
-	)
+	var ahead: float = minf(render_tick - float(_tick_at(newest)), float(max_extrapolation_ticks))
 	sampled_position = _positions[physical] + _velocities[physical] * ahead * seconds_per_tick
 	sampled_yaw = _yaws[physical]
 	sampled_pitch = _pitches[physical]

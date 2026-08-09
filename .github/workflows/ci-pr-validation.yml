@@ -1,0 +1,50 @@
+name: CI - PR Validation
+
+on:
+  pull_request:
+    # 'edited' re-runs commitlint when the PR title changes.
+    types: [opened, synchronize, reopened, edited]
+
+# Cancel superseded runs on the same PR to save free-tier minutes.
+concurrency:
+  group: ci-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install runtime deps (xvfb, unzip)
+        run: sudo apt-get update && sudo apt-get install -y xvfb unzip
+      - name: Cache Godot
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/godot
+          key: godot-4.7-stable-linux
+      - name: Install Godot
+        run: ./hack/install-godot.sh # exports GODOT_BIN into $GITHUB_ENV
+      - name: Run tests
+        run: ./hack/run-tests.sh
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint GDScript
+        run: ./hack/lint.sh # venv + gdformat --check + gdlint
+
+  commitlint:
+    name: commitlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: ./hack/check-pr-title.sh

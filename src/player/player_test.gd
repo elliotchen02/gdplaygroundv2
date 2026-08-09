@@ -87,13 +87,17 @@ func test_jump_action_reaches_movement_component_through_the_signal() -> void:
 	# The jump path is InputComponent.jump_requested -> MovementComponent.jump,
 	# connected in Player._ready. Only a scene-level test covers that hop.
 	_runner.simulate_action_pressed(&"jump")
-	await _runner.simulate_frames(2)
-	assert_float(_player.velocity.y).is_greater(0.0)
 
+	# Sample across the rise: the exact tick the queued jump lands on shifts
+	# with process/physics interleaving (windowed vs headless), so assert peak
+	# upward velocity over the window rather than at one fixed frame.
 	var peak_y: float = _player.global_position.y
-	for _i: int in 20:
+	var peak_up_velocity: float = 0.0
+	for _i: int in 22:
 		await _runner.simulate_frames(1)
+		peak_up_velocity = maxf(peak_up_velocity, _player.velocity.y)
 		peak_y = maxf(peak_y, _player.global_position.y)
+	assert_float(peak_up_velocity).is_greater(0.0)
 	assert_float(peak_y).is_greater(0.2)
 
 
