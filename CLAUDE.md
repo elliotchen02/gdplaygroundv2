@@ -89,8 +89,6 @@ gdUnit4. Tests are **colocated** with the code they test using a `_test` suffix
 
 ### Which runtime tier
 
-**Read `docs/runbooks/runtime-testing.md` before testing at runtime.**
-
 - Component logic → a gdUnit4 suite building its nodes by hand.
 - Scene behaviour under real input actions → gdUnit4 `scene_runner()`.
 - Multiplayer claim-and-correct → the engine run headless as two peers.

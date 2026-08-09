@@ -9,7 +9,9 @@ extends Node
 ## next. Applying each one the moment it lands makes a body stutter by exactly
 ## the irregularity of the network. Buffering instead, and reading back a little
 ## behind the newest arrival, turns those bursts into continuous motion. The
-## caller decides how far behind to read; see the README for how to choose.
+## caller decides how far behind to read: the delay must exceed the gap between
+## arrivals, then trades latency for jitter absorption. Gaffer On Games puts the
+## practical floor near 100 ms at 60 Hz — https://gafferongames.com/post/snapshot_interpolation/
 ##
 ## Pure arithmetic — no multiplayer, no physics queries, no clock of its own —
 ## so it obeys the systems/ dependency rule and unit-tests without a

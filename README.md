@@ -84,8 +84,7 @@ it tests (`movement_component.gd` → `movement_component_test.gd`).
 
 Runtime behaviour is tested in tiers — a gdUnit4 suite, a `scene_runner()` scene
 test, a headless multi-peer run, or godot-mcp for what only exists in a rendered
-frame. [`docs/runbooks/runtime-testing.md`](docs/runbooks/runtime-testing.md)
-says which to reach for.
+frame.
 
 ## Contributing
 

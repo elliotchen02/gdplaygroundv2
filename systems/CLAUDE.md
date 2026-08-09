@@ -36,16 +36,3 @@ piece of code needs game-specific knowledge, it belongs in `src/`.
 7. Delete placeholder behaviour and anything unused — warnings are fatal.
 8. Write the component's `README.md`, add a colocated `_test.gd`, and add it to
    the catalog in `components/README.md`. All three are required.
-
-## Gotchas
-
-- **`@tool` is not inherited.** Every component wanting
-  `_get_configuration_warnings()` declares its own, and guards runtime-only work
-  with `if Engine.is_editor_hint(): return`.
-- **Runtime toggles name no networking concept.** `reads_input`, `simulates`,
-  and `activates_on_ready` are deliberately neutral so the game can clear them
-  on copies it does not own. Naming them after multiplayer would breach the
-  portability contract.
-- **Prefer pure arithmetic over scene-dependent logic.** It is what lets
-  `movement_validator_component` unit-test without a `MultiplayerAPI` or a
-  scene. Keep new components testable the same way.
