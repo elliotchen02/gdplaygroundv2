@@ -30,6 +30,8 @@ Copy `template_component/`, follow its README checklist.
 - `camera_switch_component/` — owns which of an ordered list of `Camera3D`s is the active one.
 - `movement_validator_component/` — pure server-side arithmetic that decides whether a claimed position was physically reachable, and what to accept instead. Currently parked; see `src/player/player_network.gd`.
 - `snapshot_buffer_component/` — keeps the last N states an actor was reported in, keyed by tick, and interpolates between them. Turns bursty network delivery into continuous motion.
+- `hitbox_component/` — an `Area3D` that detects the hurtboxes it overlaps and reports each once (`hit_detected`). The deal side of the hitbox↔hurtbox pair.
+- `hurtbox_component/` — an `Area3D` marking a hittable region and naming the actor a hit belongs to. The receive side of the pair.
 
 ## Runtime toggles
 

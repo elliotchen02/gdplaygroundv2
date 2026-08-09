@@ -31,8 +31,10 @@ Both are set by `Main`'s spawn function before the node enters the tree, from da
 | role | reads input | simulates | camera | collider | shows |
 | --- | --- | --- | --- | --- | --- |
 | owner (client or host) | yes | yes | yes | yes | its own simulation |
-| server record (server, not owner) | no | no | no | no | the claim it received |
-| observer (client, not owner) | no | no | no | no | a buffered, delayed sample |
+| server record (server, not owner) | no | no | no | yes | the claim it received |
+| observer (client, not owner) | no | no | no | yes | a buffered, delayed sample |
+
+The collider stays enabled on every copy so players are solid to one another. Only the owner runs `move_and_slide`, so a remote copy is an obstacle that blocks this peer's own player without ever being pushed itself. Players are on the `players` layer, masking `world` + `players`; see load-bearing rule 4 in `../net/README.md`.
 
 The **owner** simulates locally with zero latency and mirrors its transform into `claimed_*` each tick. The **server record** takes that claim as accepted and republishes it as `net_*`; a listen-server host does the same for the player it owns itself, since nothing else is in a position to. **Observers** feed `net_*` into `SnapshotBufferComponent` and draw a sample taken a fixed delay behind the newest arrival.
 
